@@ -1,0 +1,16 @@
+#database connection settings
+Type: mysql
+#URL: devapps:devapps@(10.16.5.162:3306)/pay_aggr
+URL: root:nadipw@(localhost:3306)/pay_aggr
+
+#sql commands used in application
+SQLCommand:
+
+  GetLinkPartner: >
+    select link_url from partner where code = ?
+
+  CreateHistory: >
+    insert into link (`store_id`, `terminalId`, `method`, `customer_id`, `account_number`, `account_id`, `acccount_status`, `redirect`, `code`, `remark`, `link_created_at`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())
+
+  UpdateHistory: >
+    update link SET `unlink_created_at` = now(),  `code` = ?, `remark` = ?, `acccount_status` = ? where `account_number` = ? and `method` = ?
