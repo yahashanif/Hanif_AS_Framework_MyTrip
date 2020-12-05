@@ -1,0 +1,12 @@
+#port where service shall LISTEN for connection
+listenPort: :9000
+
+rootUrl: /getOrder
+
+
+connection:
+    user: root
+    port: 3306
+    host: localhost
+    password: 
+    database: northwind
