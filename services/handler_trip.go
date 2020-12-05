@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -47,6 +48,36 @@ func (PaymentService) TripsHandler(ctx context.Context, req cm.MyTripsrequest) (
 	res.Message = response.Message
 	res.Status = response.Status
 	res.TripDetail = response.TripDetail
+
+	host := cm.Config.Connection.Host
+	port := cm.Config.Connection.Port
+	user := cm.Config.Connection.User
+	pass := cm.Config.Connection.Password
+	data := cm.Config.Connection.Database
+	var mySQL = fmt.Sprintf("%v:%v@tcp(%v:%v)/%v", user, pass, host, port, data)
+	db, err := sql.Open("mysql", mySQL)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	for _, data := range response.TripDetail {
+		AirlineName := data.AirlineName
+		AirportName := data.AirportName
+		CityName := data.CityName
+
+		fmt.Println("AirlineName : ", AirlineName)
+		fmt.Println("AirlineName : ", AirportName)
+		fmt.Println("AirlineName : ", CityName)
+
+		sql := "INSERT INTO `trip` (`AirlineName`, `AirportName`, `CityName`) VALUES (?, ?, ?)"
+		stmt, err := db.Prepare(sql)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		_, err = stmt.Exec(AirlineName, AirportName, CityName)
+
+	}
 
 	return
 }
